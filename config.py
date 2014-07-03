@@ -25,6 +25,9 @@ config = {
 "VM_SIZE_NAME" : "XplatTestVMSize",
 "VM_COMM_NAME" : "XplatTestComm",
 "VM_SSH_NAME" : "XplatTestSsh",
+"VM_DOCKER_NAME" : "XplatDockerVM",
+"VM_DOCKER_CER_DIR" : "D:/foo/bar",
+"VM_DOCKER_PORT" : "4113",
 "VM_CUSTOMDATA_NAME" : "XplatCustomdata",
 "LOGINUSER" : "LOGINUSER",
 "LOGINPASSWORD" : "LOGINPASSWORD",
@@ -33,6 +36,7 @@ config = {
 "WIN_IMAGE_NAME" :"Some Windows Image Name", #diskname is obtained from vm image list and choose the one with windows
 "VM_VNET_IMAGE_NAME" :"XplatTestImage",
 "VM_COMM_IMAGE_NAME" :"Some community image name", #browse http://vmdepot.msopentech.com/ select a vm anc click on deployment button
+"VM_DOCKER_IMG_NAME" : "TestLinuxImage",
 
 "USER_NAME" :"XplatTestUser",
 "PASSWORD" :"Pa$$word@123" ,
@@ -50,7 +54,7 @@ config = {
 "VM_IMAGE_NAME" : "XplatTestImage",
 "VM_IMAGE_LABEL" : "XplatTestImageLabel",
 "VM_IMAGE_DESC" : '"Test Offshore Image"',
-"VM_DISK_SOURCE_PATH" :"VM_DISK_SOURCE_PATH", #mediauri obtained from vm disk show diskname(diskname is obtained from vm disk list and choose the one with linux as os)
+"VM_DISK_SOURCE_PATH" :"http://acsforsdk2.blob.core.windows.net/vm-images/umyl1zc0.4qa201404292111570824.vhd", #mediauri obtained from vm disk show diskname(diskname is obtained from vm disk list and choose the one with linux as os)
 "IMAGE_BLOB_URL" : "IMAGE_BLOB_URL",		#http://StoragecontainerUrl/vm-images/OffshoreXplatTestImage002"
 "TARGET_IMG_NAME" : "XplatTestTargetImg",
 
@@ -60,7 +64,7 @@ config = {
 "VM_DISK_LABEL" : "XplatTestDisklbl",
 "VM_DISK_NEW_LABEL" : "XplatTestDiskNewlbl",
 "VM_DISK_DESC" : '"Test Offshore Disk"',
-"DISK_IMAGE_BLOB_URL": "DISK_IMAGE_BLOB_URL", 			#http://StoragecontainerUrl/disks/OffshoreXplatTestDisk"
+"DISK_IMAGE_BLOB_URL": "http://acsforsdk2.blob.core.windows.net/disks/OffshoreXplatTestDisk", 			#http://StoragecontainerUrl/disks/OffshoreXplatTestDisk"
 "VM_DISK_ATTACH_BLOB_URL": "VM_DISK_ATTACH_BLOB_URL", 	#http://StoragecontainerUrl/disks/disknewupload.vhd"
 
 #************** VM DISK UPLOAD VARIABLES *****************
@@ -91,8 +95,8 @@ config = {
 
 #************** FLAG VALUES **************************
 
-"GLOBAL_FLAG" : "1",
-"AD_Login" : "1",
+"GLOBAL_FLAG" : "0",
+"Azure_AD_Login_FLAG" : "1",
 
 # NPM FLAGS
 
@@ -115,7 +119,7 @@ config = {
 "AZURE_LOC_LIST_FLAG" : "0" ,
 "AZURE_SERVICE_DEL_FLAG" : "0" ,
 "ACCOUNT_CLEAR_FLAG" : "0" ,
-"AZURE_LOGIN_FLAG" : "1",
+"AZURE_LOGIN_FLAG" : "0",
 # VM FLAGS
 
 "VM_CREATE_FLAG" : "0" ,
@@ -149,7 +153,7 @@ config = {
 # IMAGE FLAGS
 
 "IMAGE_CREATE_FLAG" : "0" ,
-"IMAGE_LIST_FLAG" : "1" ,
+"IMAGE_LIST_FLAG" : "0" ,
 "IMAGE_SHOW_FLAG" : "0" ,
 "IMAGE_DEL_FLAG" : "0" ,
 
@@ -166,5 +170,10 @@ config = {
 "NETWORK_CREATE_FLAG" : "0" ,
 "NETWORK_DELETE_FLAG" : "0" ,
 "DISK_DEL_FLAG" : "0" ,
+
+#DOCKER FLAGS
+"VM_DOCKER_CREATE_FLAG" : "1" ,
+"VM_DOCKER_DELETE_FLAG" : "1",
+
 
 }
