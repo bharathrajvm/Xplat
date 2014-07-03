@@ -3,11 +3,14 @@
 import sys,os,subprocess
 import time
 import sys
+import math
+import subprocess as sp
 
 
-count_err = 0
-count_ok = 0
-
+counterr = 0
+countok = 0
+countprg = 0
+countpercentage = 0
 
 
 
@@ -20,50 +23,59 @@ def create_file(path):
 
 	
 def execute_command_with_flag(cmd,logfile,flag,metalog):
-	if(flag == "1"):
+    if(flag == "1"): 
 		p1 = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		lines = p1.stdout.read()
+		nooflines = len(lines)
 		p1.wait()
 		out,err =  p1.communicate()
-		str1 = metalog.replace("*","")
+		result = out.decode()
 		if(err):
 		 logerr.write(metalog)
 		 for linerr in err:
 		  logerr.write(linerr)
-		 global count_err
-		 count_err+=1
-		 print str1 + '--FAIL' + '\n'
+		 global counterr
+		 counterr+=1
+		 str1 = metalog.replace("*","")
+		 print '\n' + str1 + '--FAIL' + '\n'
+		 print cmd
 		else:
 		 logfile.write(metalog)
 		 for line in lines:
 		  logfile.write(line)
-		 global count_ok
-		 count_ok+=1
+		 global countok
+		 countok+=1
+		 str1 = metalog.replace("*","") 
 		 print "\n" + str1 + "--PASS" + '\n'
+		 
+		 
    
-def printstatus():
-     print 'Total No of Pass:',count_ok
-     print 'Total No of Fail:', count_err
+def totalcases():
+     print 'Total No of Pass:',countok
+     print 'Total No of Fail:', counterr
 
 def execute_command(cmd,logfile,metalog):
    	p1 = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	lines = p1.stdout.read()
+	nooflines = len(lines)
 	p1.wait()
 	out,err =  p1.communicate()
-	str1 = metalog.replace("*","")
+	result = out.decode()
 	if(err):
 	 logerr.write(metalog)
 	 for linerr in err:
 	  logerr.write(linerr)
-	 global count_err
-	 count_err+=1
+	 global counterr
+	 counterr+=1
+	 str1 = metalog.replace("*","")
 	 print str1 + '--FAIL' + '\n'
 	else:
 	 logfile.write(metalog)
 	 for line in lines:
 	  logfile.write(line)
-	 global count_ok
-	 count_ok+=1
+	 global countok
+	 countok+=1
+	 str1 = metalog.replace("*","") 
 	 print str1 + "--PASS" +"\n"
 	
 
@@ -80,9 +92,10 @@ if __name__ == "__main__":
 		metalog = "************** Azure Help Command **************** \t"
 		execute_command("azure",logfile,metalog)
 		
-		if(config['AD_Login'] == "1"):
+		if(config['Azure_AD_Login_FLAG'] == "1"):
 		 metalog = "************** Azure Login **************** \t" 
 		 execute_command("azure login -u "+ config['LOGINUSER'] + " -p " + config['LOGINPASSWORD'] + " --quiet",logfile,metalog)
+		
 		else:
 		 metalog = " ************** Azure Account Download ******************* \t"
 		 execute_command("azure account download ",logfile,metalog)		
@@ -226,6 +239,15 @@ if __name__ == "__main__":
 		metalog = "************** Azure Affinity Group Delete ******************* \t"
 		execute_command("azure account affinity-group delete "+config['AFFINITY_GRP_NAME'] + " --quiet",logfile,metalog)
 		
+		metalog = "************** Azure VM Docker Create ******************* \t"
+		execute_command("azure vm create " + config['XplatDockerVM'] + " " + config['VM_DOCKER_IMG_NAME']  + " " + " testuser "+ " " + config['PASSWORD'] + " " + "--ssh-cert "+config['CERT_FILE'] + " -e 22 -l "+config['LOCATION'],logfile,metalog)
+		metalog = "************** Azure VM Docker Delete ******************* \t"
+		execute_command("azure vm delete "+config['XplatDockerVM'] + " -b --quiet ",logfile,metalog)
+		metalog = "**********************Azure VM Docker Create********************************* \t"	
+		execute_command("azure vm docker create "+ config['XplatDockerVM'] + " "+ config['VM_DOCKER_IMG_NAME'] +" "+ config['USER_NAME'] +" "+ config['PASSWORD'] +" -l " +config['LOCATION']+" " + config['VM_DOCKER_CER_DIR'] + " " + config['VM_DOCKER_PORT'] ,logfile,metalog)
+		metalog = "************** Azure VM Docker Delete ******************* \t"
+		execute_command("azure vm delete "+config['XplatDockerVM'] + " -b --quiet ",logfile,metalog)
+		
 		metalog = "************** Azure Account Clear ******************* \t"
 		execute_command("azure account clear --quiet",logfile,metalog)
 	if(config['GLOBAL_FLAG'] == "0"):
@@ -237,7 +259,7 @@ if __name__ == "__main__":
 		metalog = "************** Azure Help Command **************** \t"
 		execute_command_with_flag("azure",logfile,config['AZURE_HELP_FLAG'],metalog)
 		
-		if(config['AD_Login'] == "1"):
+		if(config['Azure_AD_Login_FLAG'] == "1"):
 		 metalog = "************** Azure Login **************** \t" 
 		 execute_command_with_flag("azure login -u "+ config['LOGINUSER'] + " -p " + config['LOGINPASSWORD'] + " --quiet",logfile,config['AZURE_LOGIN_FLAG'],metalog)
 		else:
@@ -382,6 +404,14 @@ if __name__ == "__main__":
 		metalog = "************** Azure VM Affinity Group Delete ******************* \t"
 		execute_command_with_flag("azure account affinity-group delete "+config['AFFINITY_GRP_NAME'] + " --quiet ",logfile,config['VM_AFFINITY_DEL_FLAG'],metalog)
 		
+		metalog = "************** Azure VM Docker Create[certificate] ******************* \t"
+		execute_command_with_flag("azure vm create " + config['VM_NAME'] + " " + config['VM_DOCKER_IMG_NAME']  + " " + " testuser "+ " " + config['PASSWORD'] + " " + "--ssh-cert "+config['CERT_FILE'] + " -e 22 -l "+config['LOCATION'],logfile,config['VM_DOCKER_CREATE_FLAG'],metalog)
+		metalog = "************** Azure VM Docker Delete ******************* \t"
+		execute_command_with_flag("azure vm delete "+config['VM_NAME'] + " -b --quiet ",logfile,config["VM_DOCKER_DELETE_FLAG"],metalog)
+		metalog = "**********************Azure VM Docker Create[Docker Port]********************************* \t"	
+		execute_command_with_flag("azure vm docker create "+ config['VM_NAME'] + " "+ config['VM_DOCKER_IMG_NAME'] +" "+ config['USER_NAME'] +" "+ config['PASSWORD'] +" -l " +config['LOCATION']+ " " + config['VM_DOCKER_CER_DIR'] + " " + config['VM_DOCKER_PORT'] ,logfile,config['VM_DOCKER_CREATE_FLAG'],metalog)
+		metalog = "************** Azure VM Docker Delete ******************* \t"
+		execute_command_with_flag("azure vm delete "+config['VM_NAME'] + " -b --quiet ",logfile,config["VM_DOCKER_DELETE_FLAG"],metalog)
 		metalog = "************** Azure Account Clear ******************* \t"
 		execute_command_with_flag("azure account clear --quiet",logfile,config['ACCOUNT_CLEAR_FLAG'],metalog)
-        printstatus()
+        totalcases()
